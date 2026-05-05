@@ -1,0 +1,13 @@
+/
+├── config/
+│   └── db.js              # MongoDB Atlas connection
+├── models/
+│   └── user.model.js      # Mongoose schema
+├── controllers/
+│   └── user.controller.js # All CRUD logic
+├── routes/
+│   └── user.routes.js     # URL routes → controller
+├── .env                   # Environment variables
+├── .gitignore
+├── package.json
+└── server.js              # Entry point – server start
