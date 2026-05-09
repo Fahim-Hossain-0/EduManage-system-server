@@ -5,13 +5,12 @@ const {
   createUser,
   getUsers,
   getUserRole,
-  updateLastLogin
 
 } = require('../controllers/user.controller');
 
-router.post('/', createUser);
-router.get('/', getUsers);
-router.get('/role/:email',getUserRole)
+router.post('/users', createUser);
+router.get('/all-users', getUsers);
+router.get('/users/role/:email',getUserRole)
 
 
 module.exports = router;

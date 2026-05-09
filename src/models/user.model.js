@@ -37,7 +37,9 @@ const createUser = async (userData) => {
 
 // Get all users
 const getUsers = async () => {
-  return await collection().find().toArray();
+    const allUserNumber = await collection().countDocuments();
+    const users = await collection().find().toArray();
+    return { users, allUserNumber };
 };
 
 const getUserRole = async(email)=>{
@@ -51,6 +53,6 @@ module.exports = {
   createUser,
   getUsers,
   getUserRole,
-  
+
 
 };
