@@ -38,34 +38,18 @@ const getUserRole = async(req,res)=>{
     if(!user){
       return res.status(404).json({message:"User not found"})
     }
+    res.json({role:user.role})
   } catch (error) {
-
+    res.status(500).json({ message: error.message });
     
   }
 }
 
-const updateLastLogin = async (req, res) => {
-  try{
-    const {email} =req.body
-    if(!email){
-      return res.status(400).json({message:"Email is required"})
-    }
-    const filter = {email}
-    const updateDoc = {
-      $set:{
-        last_log_in: new Date()
-      }
-  }
-  const result = await userModel.updateLastLogin(filter,updateDoc)
-  res.json(result)
-  }catch(error){
-    res.status(500).json({ message: error.message });
-  }
-}
+
 
 module.exports = {
   createUser,
   getUsers,
   getUserRole,
-  updateLastLogin
+  
 };
