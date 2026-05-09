@@ -12,7 +12,20 @@ const getUsers = async () => {
   return await collection().find().toArray();
 };
 
+const getUserRole = async(email)=>{
+  return await collection().findOne({email})
+}
+
+const updateLastLogin = async (filter,updateDoc) => {
+  const result = await collection().updateOne(filter,updateDoc)
+
+  return result
+}
+
+
 module.exports = {
   createUser,
-  getUsers
+  getUsers,
+  updateLastLogin
+
 };
