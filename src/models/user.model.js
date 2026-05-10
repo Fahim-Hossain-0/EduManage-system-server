@@ -36,23 +36,63 @@ const createUser = async (userData) => {
 };
 
 // Get all users
-const getUsers = async () => {
-    const allUserNumber = await collection().countDocuments();
-    const users = await collection().find().toArray();
-    return { users, allUserNumber };
+// Get all users with pagination
+
+const getUsers = async (page, limit) => {
+
+    // total users count
+    const totalUsers = await collection()
+        .countDocuments();
+
+    // paginated users
+    const result = await collection()
+
+        .find()
+
+        .skip((page - 1) * limit)
+
+        .limit(parseInt(limit))
+
+        .toArray();
+
+    return {
+        result,
+        totalUsers
+    };
+};
+const getUsersNumber = async () => {
+
+    const total = await collection().countDocuments();
+
+    const teachers = await collection().countDocuments({ role: "teacher" });
+
+    const students = await collection().countDocuments({ role: "student" });
+
+    return { total, teachers, students };
 };
 
 const getUserRole = async(email)=>{
   return await collection().findOne({email})
 }
 
+const updateUserRole = async (email, role) => {
 
+  const filter = {
+    email
+  };
+  const updateDoc = {
+    $set: {
+      role
+    }
+  };
 
+  return await collection().updateOne(filter, updateDoc);
+};
 
 module.exports = {
   createUser,
   getUsers,
+  getUsersNumber,
   getUserRole,
-
-
+  updateUserRole
 };
