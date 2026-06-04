@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const {get} = require('../app')
 const { getDB } = require('../config/db');
 
@@ -25,6 +26,14 @@ const getAllClasses = async (page, limit) => {
         result,
         totalClasses
     };
+};
+
+const getSingleClass = async (id) => {
+    const result = await collection().findOne({
+        _id: new ObjectId(id)
+    });
+
+    return result;
 };
 
 const getMyClasses = async (email, status , page, limit) => {
@@ -86,6 +95,7 @@ const updateClassStatus = async (
 module.exports = {
     addNewClass,
     getAllClasses,
+    getSingleClass,
     getMyClasses,
     getPendingClasses,
     updateClassStatus

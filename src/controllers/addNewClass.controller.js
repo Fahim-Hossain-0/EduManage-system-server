@@ -27,6 +27,20 @@ const getAllClasses = async(req,res)=>{
 
 }
 
+const getSingleClass = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await newClassModel.getSingleClass(id);
+
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
 const getMyClasses = async (req, res) => {
 
     try {
@@ -104,6 +118,7 @@ const updateClassStatus = async (req, res) => {
 module.exports = {
     addNewClass,
     getAllClasses,
+    getSingleClass,
     getMyClasses,
     getPendingClasses,
     updateClassStatus

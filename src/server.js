@@ -2,8 +2,15 @@ require('dotenv').config();
 
 const app = require('./app');
 const { connectDB } = require('./config/db');
+const Stripe = require("stripe");
 
 connectDB();
+
+
+const stripe = Stripe(
+  process.env.STRIPE_SECRET_KEY
+);
+
 
 const PORT = process.env.PORT || 5000;
 
