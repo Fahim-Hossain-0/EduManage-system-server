@@ -5,33 +5,27 @@ const collection = () => getDB().collection('users');
 
 // Create user
 const createUser = async (userData) => {
-
-  const filter = {
-    email: userData.email
-  };
-
-  const updateDoc = {
-
-    $set: {
-      name: userData.name,
-      image: userData.image,
-      role: userData.role,
-      last_log_in: userData.last_log_in,
-    },
-
-    $setOnInsert: {
-      created_at: userData.created_at,
-    },
-  };
-
-  const options = {
-    upsert: true
-  };
-
   return await collection().updateOne(
-    filter,
-    updateDoc,
-    options
+    {
+      email: userData.email,
+    },
+    {
+      $set: {
+        name: userData.name,
+        image: userData.image,
+        last_log_in:
+          userData.last_log_in,
+      },
+
+      $setOnInsert: {
+        role: "student",
+        created_at:
+          userData.created_at,
+      },
+    },
+    {
+      upsert: true,
+    }
   );
 };
 

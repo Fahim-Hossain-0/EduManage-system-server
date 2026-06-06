@@ -2,13 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    
   createTeacher,
   teacherRequestApprove,
   teacherRequestReject,
   getAllTeacherRequests,
-
-} = require("../controllers/teacher.controller.js");
+} = require("../controllers/teacher.controller");
 
 router.get("/teacher-requests", getAllTeacherRequests);
 router.post("/teacher-requests", createTeacher);

@@ -1,138 +1,108 @@
-const { ObjectId } = require('mongodb');
-const {get} = require('../app')
-const { getDB } = require('../config/db');
+const { ObjectId } = require("mongodb");
+const { getDB } = require("../config/db");
 
-const teacherCollection = ()=> getDB().collection('teachers');
-const userCollection = ()=> getDB().collection('users');
+const teacherCollection = () => getDB().collection("teachers");
+const userCollection = () => getDB().collection("users");
 
+// ===============================
+// GET ALL REQUESTS
+// ===============================
 const getAllTeacherRequests = async (page, limit) => {
+  const query = { status: "pending" };
 
-    const query = { status: "pending" }; // always pending only
-    const result = await teacherCollection()
-        .find(query)
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit))
-        .toArray(); 
-    const totalTeacherRequests = await teacherCollection()
-        .countDocuments(query);
+  const result = await teacherCollection()
+    .find(query)
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit))
+    .toArray();
 
-    return {
-        result,
-        totalTeacherRequests
-    };
-}
+  const totalTeacherRequests = await teacherCollection().countDocuments(query);
 
+  return {
+    result,
+    totalTeacherRequests,
+  };
+};
+
+// ===============================
+// CREATE REQUEST
+// ===============================
 const createTeacher = async (teacherData) => {
+  const existingRequest = await teacherCollection().findOne({
+    email: teacherData.email,
+    status: { $in: ["pending", "accepted"] },
+  });
 
-    // check existing request
-    const existingRequest = await teacherCollection().findOne({
-        email: teacherData.email,
-        status: {
-            $in: ["pending", "accepted"]
-        }
-    });
-
-    // if already pending or accepted
-    if (existingRequest) {
-
-        // accepted
-        if (existingRequest.status === "accepted") {
-            return {
-                success: false,
-                message:
-                    "You are already a teacher."
-            };
-        }
-
-        // pending
-        return {
-            success: false,
-            message:
-                "Your teacher request is already pending."
-        };
-    }
-
-    // create new request
-    const result = await teacherCollection()
-        .insertOne(teacherData);
-
+  if (existingRequest) {
     return {
-        success: true,
-        message:
-            "Teacher request submitted successfully.",
-        result
+      success: false,
+      message:
+        existingRequest.status === "accepted"
+          ? "You are already a teacher."
+          : "Your teacher request is already pending.",
     };
+  }
+
+  const result = await teacherCollection().insertOne(teacherData);
+
+  return {
+    success: true,
+    message: "Teacher request submitted successfully.",
+    result,
+  };
 };
 
-const teacherRequestApprove = async (id, teacherData) => {
+// ===============================
+// APPROVE TEACHER (FIXED)
+// ===============================
+const teacherRequestApprove = async (id) => {
+  const request = await teacherCollection().findOne({
+    _id: new ObjectId(id),
+  });
 
-    const requestFilter = {
-        _id: new ObjectId(id)
-    };
-
-    const updateDoc = {
-        $set: {
-            status: "accepted"
-        }
-    };
-
-    const teacherRequestUpdate =
-        await teacherCollection().updateOne(
-            requestFilter,
-            updateDoc
-        );
-
-    const userFilter = {
-        email: teacherData.email
-    };
-
-    const userUpdateDoc = {
-        $set: {
-            role: "teacher"
-        }
-    };
-
-    const userRoleUpdate =
-        await userCollection().updateOne(
-            userFilter,
-            userUpdateDoc
-        );
-
+  if (!request) {
     return {
-        teacherRequestUpdate,
-        userRoleUpdate,
-        message: "Teacher approved successfully"
+      success: false,
+      message: "Request not found",
     };
+  }
+
+  // 1. update teacher request status
+  await teacherCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: "accepted" } }
+  );
+
+  // 2. update user role
+  await userCollection().updateOne(
+    { email: request.email },
+    { $set: { role: "teacher" } }
+  );
+
+  return {
+    success: true,
+    message: "Teacher approved successfully",
+  };
 };
 
+// ===============================
+// REJECT TEACHER
+// ===============================
 const teacherRequestReject = async (id) => {
+  await teacherCollection().updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: "rejected" } }
+  );
 
-    const requestFilter = {
-        _id: new ObjectId(id)
-    };
-
-    const updateDoc = {
-        $set: {
-            status: "rejected"
-        }
-    };
-
-    const teacherRequestUpdate =
-        await teacherCollection().updateOne(
-            requestFilter,
-            updateDoc
-        );
-
-    return {
-        teacherRequestUpdate,
-        message: "Teacher rejected successfully"
-    };
+  return {
+    success: true,
+    message: "Teacher rejected successfully",
+  };
 };
-
 
 module.exports = {
-    createTeacher,
-    teacherRequestApprove,
-    teacherRequestReject,
-    getAllTeacherRequests
-}
+  createTeacher,
+  teacherRequestApprove,
+  teacherRequestReject,
+  getAllTeacherRequests,
+};

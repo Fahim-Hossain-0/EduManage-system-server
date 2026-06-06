@@ -53,6 +53,10 @@ const getUserRole = async (req, res) => {
     const user = await userModel.getUserRole(email);
 
     if (!user) {
+  return res.status(404).json({ role: "student" });
+}
+
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     res.json({ role: user.role });
