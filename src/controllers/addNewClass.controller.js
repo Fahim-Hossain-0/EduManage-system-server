@@ -79,6 +79,25 @@ const getPendingClasses = async (req, res) => {
         });
     }
 };
+const getClassProgress = async (
+  req,
+  res
+) => {
+  try {
+    const id = req.params.id;
+
+    const result =
+      await newClassModel.getClassProgress(
+        id
+      );
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 const updateClassStatus = async (req, res) => {
 
@@ -114,6 +133,33 @@ const updateClassStatus = async (req, res) => {
     }
 };
 
+const updateClass = async (
+  req,
+  res
+) => {
+  try {
+    const id = req.params.id;
+
+    const updateData = {
+      ...req.body,
+
+      status: "pending",
+    };
+
+    const result =
+      await newClassModel.updateClass(
+        id,
+        updateData
+      );
+
+    res.send(result);
+  } catch (error) {
+    res.status(500).send({
+      message: error.message,
+    });
+  }
+};
+
 
 module.exports = {
     addNewClass,
@@ -121,5 +167,7 @@ module.exports = {
     getSingleClass,
     getMyClasses,
     getPendingClasses,
-    updateClassStatus
+        getClassProgress,
+    updateClassStatus,
+    updateClass
 }

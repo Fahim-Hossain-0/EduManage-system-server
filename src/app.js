@@ -5,6 +5,8 @@ const userRoutes = require('./routes/user.routes');
 const addNewClassRoutes = require('./routes/addNewClass.routes');
 const teacherRoutes = require('./routes/teacher.routes');
 const paymentRoutes = require('./routes/payment.routes')
+const assignmentRoutes = require("./routes/assignment.route");
+const submissionRoutes = require("./routes/submission.route");
 const app = express();
 
 app.use(cors());
@@ -14,6 +16,8 @@ app.use('/', userRoutes);
 app.use('/', addNewClassRoutes);
 app.use('/', teacherRoutes);
 app.use('/',paymentRoutes);
+app.use("/", assignmentRoutes);
+app.use("/", submissionRoutes);
 
 
 

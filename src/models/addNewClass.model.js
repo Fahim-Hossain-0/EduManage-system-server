@@ -3,6 +3,12 @@ const {get} = require('../app')
 const { getDB } = require('../config/db');
 
 const collection = ()=> getDB().collection('classes');
+const assignmentCollection = () =>
+  getDB().collection("assignments");
+
+const submissionCollection = () =>
+  getDB().collection("submissions");
+
 
 const addNewClass = async(classData)=>{
     const result = await collection().insertOne(classData);
@@ -81,6 +87,34 @@ const getPendingClasses = async (page, limit) => {
     };
 };
 
+const getClassProgress = async (id) => {
+  const classData =
+    await collection().findOne({
+      _id: new ObjectId(id),
+    });
+
+  const totalAssignments =
+    await assignmentCollection()
+      .countDocuments({
+        classId: id,
+      });
+
+  const totalSubmissions =
+    await submissionCollection()
+      .countDocuments({
+        classId: id,
+      });
+
+  return {
+    totalEnrollment:
+      classData?.totalEnrollment || 0,
+
+    totalAssignments,
+
+    totalSubmissions,
+  };
+};
+
 const updateClassStatus = async (
     filter,
     updateDoc
@@ -92,11 +126,27 @@ const updateClassStatus = async (
     );
 };
 
+const updateClass = async (
+  id,
+  updateData
+) => {
+  return await collection().updateOne(
+    {
+      _id: new ObjectId(id),
+    },
+    {
+      $set: updateData,
+    }
+  );
+};
+
 module.exports = {
     addNewClass,
     getAllClasses,
     getSingleClass,
     getMyClasses,
     getPendingClasses,
-    updateClassStatus
+        getClassProgress,
+    updateClassStatus,
+    updateClass
 }
