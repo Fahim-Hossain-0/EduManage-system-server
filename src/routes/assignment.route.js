@@ -10,6 +10,5 @@ const {
 router.post("/assignments", createAssignment);
 
 router.get("/assignments/:classId", getAssignmentsByClass);
-router.get("/assignments/:classId", getAssignmentsByClass);
 
 module.exports = router;

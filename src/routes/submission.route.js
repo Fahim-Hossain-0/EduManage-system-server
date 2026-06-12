@@ -5,7 +5,7 @@ const router = express.Router();
 const {
   createSubmission,
   getStudentSubmissions,
-    getAssignmentSubmissions,
+  getAssignmentSubmissions,
 } = require("../controllers/submission.controller");
 
 router.post("/submissions", createSubmission);

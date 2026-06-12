@@ -3,43 +3,29 @@ const { getDB } = require("../config/db");
 const collection = () =>
   getDB().collection("assignments");
 
-// Create Assignment
+// ====================
+// CREATE ASSIGNMENT
+// ====================
 
-const createAssignment = async (
-  assignmentData
-) => {
-  const result =
-    await collection().insertOne(
+const createAssignment =
+  async (assignmentData) => {
+    return await collection().insertOne(
       assignmentData
     );
+  };
 
-  return result;
-};
-
-// Get Assignments By Class
+// ====================
+// GET ASSIGNMENTS BY CLASS
+// ====================
 
 const getAssignmentsByClass =
   async (classId) => {
-    const result =
-      await collection()
-        .find({ classId })
-        .sort({
-          createdAt: -1,
-        })
-        .toArray();
-
-    return result;
-  };
-
-  const getStudentSubmissions =
-  async (
-    email,
-    classId
-  ) => {
     return await collection()
       .find({
-        studentEmail: email,
         classId,
+      })
+      .sort({
+        createdAt: -1,
       })
       .toArray();
   };
@@ -47,5 +33,4 @@ const getAssignmentsByClass =
 module.exports = {
   createAssignment,
   getAssignmentsByClass,
-  getStudentSubmissions
 };
