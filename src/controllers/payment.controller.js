@@ -1,6 +1,4 @@
-const Stripe = require("stripe");
-
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = require("../config/stripe");
 
 const paymentModel = require("../models/payment.model");
 
@@ -8,27 +6,41 @@ const { ObjectId } = require("mongodb");
 
 const { getDB } = require("../config/db");
 
-const createPaymentIntent = async (req, res) => {
-  try {
-    const { price } = req.body;
+const createPaymentIntent =
+  async (req, res) => {
+    try {
 
-    const amount = parseInt(price * 100);
+      const { price } =
+        req.body;
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: "usd",
-      payment_method_types: ["card"],
-    });
+      const amount =
+        parseInt(price * 100);
 
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
-  } catch (error) {
-    res.status(500).send({
-      message: error.message,
-    });
-  }
-};
+      const paymentIntent =
+        await stripe.paymentIntents.create({
+          amount,
+          currency: "usd",
+          payment_method_types: [
+            "card",
+          ],
+        });
+
+      res.send({
+        clientSecret:
+          paymentIntent.client_secret,
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).send({
+        message:
+          error.message,
+      });
+
+    }
+  };
 
 const savePayment = async (req, res) => {
   try {
