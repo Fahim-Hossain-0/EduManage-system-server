@@ -9,31 +9,22 @@ let db;
 
 async function connectDB() {
   try {
-    if (db) return db;
-
     client = new MongoClient(uri);
 
-    await client.connect();
+    await client.connect(); // MUST CONNECT
 
     db = client.db(process.env.DB_NAME);
 
     console.log("MongoDB connected ✅");
-
-    return db;
   } catch (error) {
-    console.error(
-      "Database connection error:",
-      error.message
-    );
-    throw error;
+    console.error(error);
   }
 }
 
 function getDB() {
-  if (!db)
-    throw new Error(
-      "DB not initialized"
-    );
+  if (!db) {
+    throw new Error("DB not initialized");
+  }
 
   return db;
 }
