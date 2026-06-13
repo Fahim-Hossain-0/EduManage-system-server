@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://blood-donation-bcbd2.web.app"
+  "http://edu-manage-system.surge.sh"
 ];
 
 app.use(
