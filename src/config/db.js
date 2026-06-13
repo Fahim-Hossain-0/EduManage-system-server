@@ -8,26 +8,20 @@ let client;
 let db;
 
 async function connectDB() {
-  try {
-    client = new MongoClient(uri);
+  if (db) return db;
 
-    await client.connect(); // MUST CONNECT
+  client = new MongoClient(uri);
 
-    db = client.db(process.env.DB_NAME);
+  await client.connect();
 
-    console.log("MongoDB connected ✅");
-  } catch (error) {
-    console.error(error);
-  }
+  db = client.db(process.env.DB_NAME);
+
+  console.log("MongoDB connected ✅");
+
+  return db;
 }
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_NAME:", process.env.DB_NAME);
 
 function getDB() {
-  if (!db) {
-    throw new Error("DB not initialized");
-  }
-
   return db;
 }
 
