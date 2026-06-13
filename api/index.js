@@ -1,15 +1,23 @@
 require("dotenv").config();
 
+const serverless = require("serverless-http");
+
 const app = require("../src/app");
 const { connectDB } = require("../src/config/db");
 
-let isConnected = false;
+let initialized = false;
+
+async function init() {
+  if (!initialized) {
+    await connectDB();
+    initialized = true;
+  }
+}
+
+const handler = serverless(app);
 
 module.exports = async (req, res) => {
-  if (!isConnected) {
-    await connectDB();
-    isConnected = true;
-  }
+  await init();
 
-  return app(req, res);
+  return handler(req, res);
 };
