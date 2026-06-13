@@ -11,7 +11,15 @@ const evaluationRoutes = require("./routes/evaluation.route");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://edu-manage-system.surge.sh",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Root Route
