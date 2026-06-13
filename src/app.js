@@ -13,10 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://edu-manage-system.surge.sh",
-    ],
+    origin: "*",
     credentials: true,
   })
 );
