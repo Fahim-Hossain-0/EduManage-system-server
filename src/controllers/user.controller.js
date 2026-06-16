@@ -44,50 +44,29 @@ const getUsersNumber = async (req, res) => {
 
 // get user by email
 
-// const getUserRole = async (req, res) => {
-//   // console.log('headers', req.headers);
-//   try {
-//     const email = req.params.email;
-//     if (!email) {
-//       return res.status(400).json({ message: "Email is required" });
-//     }
-//     const user = await userModel.getUserRole(email);
-
-//     if (!user) {
-//   return res.status(404).json({ role: "student" });
-// }
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     res.json({ role: user.role });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
 const getUserRole = async (req, res) => {
+  // console.log('headers', req.headers);
   try {
     const email = req.params.email;
-
-    if (email !== req.decoded.email) {
-      return res.status(403).send({
-        message: "Forbidden Access"
-      });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
-
     const user = await userModel.getUserRole(email);
 
-    res.send({
-      role: user?.role || "student"
-    });
+    if (!user) {
+  return res.status(404).json({ role: "student" });
+}
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ role: user.role });
   } catch (error) {
-    res.status(500).send({
-      message: error.message
-    });
+    res.status(500).json({ message: error.message });
   }
 };
+
+
 
 const updateUserRole = async (req, res) => {
   try {
