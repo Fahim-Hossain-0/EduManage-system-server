@@ -14,7 +14,7 @@ const verifyAdmin = require('../middleware/verifyAdmin');
   router.post('/users', createUser);
   router.get('/all-users', verifyToken, verifyAdmin, getUsers);
   router.get('/users-number', getUsersNumber);
-  router.get('/users/role/:email', verifyToken, verifyAdmin, getUserRole);
+  router.get('/users/role/:email', verifyToken, getUserRole);
   router.patch('/users/role/:email', verifyToken, verifyAdmin, updateUserRole);
 
   module.exports = router;
