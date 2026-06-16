@@ -45,6 +45,7 @@ const getUsersNumber = async (req, res) => {
 // get user by email
 
 const getUserRole = async (req, res) => {
+  console.log('headers', req.headers);
   try {
     const email = req.params.email;
     if (!email) {

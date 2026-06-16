@@ -16,7 +16,7 @@ async function connectDB() {
 
   db = client.db(process.env.DB_NAME);
 
-  console.log("MongoDB connected ✅");
+  // console.log("MongoDB connected ✅");
 
   return db;
 }

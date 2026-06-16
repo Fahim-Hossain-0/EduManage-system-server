@@ -8,11 +8,13 @@
     getUsersNumber,
     updateUserRole
   } = require('../controllers/user.controller');
+const verifyToken = require('../middleware/verifyToken');
+const verifyAdmin = require('../middleware/verifyAdmin');
 
   router.post('/users', createUser);
-  router.get('/all-users', getUsers);
+  router.get('/all-users', verifyToken, verifyAdmin, getUsers);
   router.get('/users-number', getUsersNumber);
-  router.get('/users/role/:email', getUserRole);
-  router.patch('/users/role/:email', updateUserRole);
+  router.get('/users/role/:email', verifyToken, verifyAdmin, getUserRole);
+  router.patch('/users/role/:email', verifyToken, verifyAdmin, updateUserRole);
 
   module.exports = router;
