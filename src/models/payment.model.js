@@ -1,25 +1,37 @@
 const { getDB } = require("../config/db");
 
-const paymentsCollection = () =>
-  getDB().collection("payments");
+// const paymentsCollection = () =>
+//   getDB().collection("payments");
 
-const enrollmentsCollection = () =>
-  getDB().collection("enrollments");
+// const enrollmentsCollection = () =>
+//   getDB().collection("enrollments");
+
+const paymentCollections = async () => {
+  const db = await getDB();
+  return db.collection("payments");
+};
+const enrollmentCollections = async () => {
+  const db = await getDB();
+  return db.collection("enrollments");
+};
 
 const savePayment = async (data) => {
-  return await paymentsCollection()
+  const paymentCollection = await paymentCollections()
+
+  return await paymentCollection
     .insertOne(data);
 };
 
 const saveEnrollment = async (data) => {
-  return await enrollmentsCollection()
+  const enrollmentCollection = await enrollmentCollections()
+  return await enrollmentCollection
     .insertOne(data);
 };
 
 const getEnrollmentsByEmail =
 async (email) => {
-
-  return await enrollmentsCollection()
+const enrollmentCollection = await enrollmentCollections()
+  return await enrollmentCollection
     .find({
       studentEmail: email,
     })

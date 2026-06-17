@@ -1,13 +1,16 @@
 const { getDB } = require("../config/db");
 
-const collection = () =>
-  getDB().collection("evaluationReports");
+// const collection = () =>
+  // getDB().collection("evaluationReports");
 
-const createEvaluation = async (
-  data
-) => {
-  const existing =
-    await collection().findOne({
+const collection = async () => {
+  const db = await getDB();
+  return db.collection("evaluationReports");
+}
+const createEvaluation = async ( data) => {
+  const evaluationReportsCollection = await collection()
+  const existing = 
+    await evaluationReportsCollection.findOne({
       classId: data.classId,
       studentEmail:
         data.studentEmail,
@@ -22,7 +25,7 @@ const createEvaluation = async (
   }
 
   const result =
-    await collection().insertOne(
+    await evaluationReportsCollection.insertOne(
       data
     );
 
@@ -32,20 +35,21 @@ const createEvaluation = async (
   };
 };
 
-const getClassEvaluations =
-  async (classId) => {
-    return await collection()
+const getClassEvaluations =async (classId) => {
+  const evaluationReportsCollection = await collection()
+      return await evaluationReportsCollection
       .find({
         classId,
       })
       .toArray();
   };
-  const getStudentEvaluation =
-  async (
+
+  const getStudentEvaluation =async (
     classId,
     email
   ) => {
-    return await collection().findOne({
+     const evaluationReportsCollection = await collection()
+    return await evaluationReportsCollection.findOne({
       classId,
       studentEmail: email,
     });
@@ -53,7 +57,8 @@ const getClassEvaluations =
 
   const getAllEvaluations =
   async () => {
-    return await collection()
+     const evaluationReportsCollection = await collection()
+    return await evaluationReportsCollection
       .find({})
       .sort({
         createdAt: -1,

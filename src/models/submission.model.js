@@ -1,15 +1,20 @@
 const { getDB } = require("../config/db");
 
-const collection = () =>
-  getDB().collection("submissions");
+// const collection = () =>
+//   getDB().collection("submissions");
 
+const collection = async () => {
+  const db = await getDB();
+  return db.collection("submissions");
+};
 // ====================
 // CREATE SUBMISSION
 // ====================
 
 const createSubmission = async (data) => {
+  const submissionCollection = await collection();
   const existing =
-    await collection().findOne({
+    await submissionCollection.findOne({
       assignmentId: data.assignmentId,
       studentEmail: data.studentEmail,
     });
@@ -23,7 +28,7 @@ const createSubmission = async (data) => {
   }
 
   const result =
-    await collection().insertOne(data);
+    await submissionCollection.insertOne(data);
 
   return {
     success: true,
@@ -37,7 +42,8 @@ const createSubmission = async (data) => {
 
 const getStudentSubmissions =
   async (email, classId) => {
-    return await collection()
+    const submissionCollection = await collection();
+    return await submissionCollection
       .find({
         studentEmail: email,
         classId: classId,
@@ -51,7 +57,8 @@ const getStudentSubmissions =
 
 const getAssignmentSubmissions =
   async (assignmentId) => {
-    return await collection()
+    const submissionCollection = await collection();
+    return await submissionCollection
       .find({
         assignmentId,
       })

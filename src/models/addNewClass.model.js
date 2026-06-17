@@ -1,30 +1,45 @@
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../config/db');
 
-const collection = ()=> getDB().collection('classes');
-const assignmentCollection = () =>
-  getDB().collection("assignments");
+// const collection = ()=> getDB().collection('classes');
 
-const submissionCollection = () =>
-  getDB().collection("submissions");
+// const assignmentCollection = () =>
+//   getDB().collection("assignments");
+
+// const submissionCollection = () =>
+//   getDB().collection("submissions");
+
+const classesCollections = async () => {
+  const db = await getDB();
+  return db.collection("classes");
+}
+const assignmentsCollections = async () => {
+  const db = await getDB();
+  return db.collection("assignments");
+}
+const submissionsCollections = async () => {
+  const db = await getDB();
+  return db.collection("submissions");
+}
 
 
 const addNewClass = async(classData)=>{
-    const result = await collection().insertOne(classData);
+  const classesCollection = await classesCollections()
+    const result = await classesCollection.insertOne(classData);
     return result;
 }
 
 const getAllClasses = async (page, limit) => {
-
+const classesCollection = await classesCollections()
     const query = { status: "approved" }; // always approved only
 
-    const result = await collection()
+    const result = await classesCollection
         .find(query)
         .skip((page - 1) * limit)
         .limit(parseInt(limit))
         .toArray();
 
-    const totalClasses = await collection()
+    const totalClasses = await classesCollection
         .countDocuments(query);
 
     return {
@@ -34,7 +49,8 @@ const getAllClasses = async (page, limit) => {
 };
 
 const getSingleClass = async (id) => {
-    const result = await collection().findOne({
+  const classesCollection = await classesCollections()
+    const result = await classesCollection.findOne({
         _id: new ObjectId(id)
     });
 
@@ -43,20 +59,21 @@ const getSingleClass = async (id) => {
 
 const getMyClasses = async (email, status , page, limit) => {
 
+  const classesCollection = await classesCollections()
     const query = { email };
 
     if (status) {
         query.status = status;
     }
 
-    const result = await collection()
+    const result = await classesCollection
         .find(query)
         .skip((page - 1) * limit)
         .limit(parseInt(limit))
         .sort({ created_at: 1 })
         .toArray()
 
-        const totalClasses = await collection()
+        const totalClasses = await classesCollection
         .countDocuments(query);
         return{
             result,
@@ -65,19 +82,19 @@ const getMyClasses = async (email, status , page, limit) => {
 };
 
 const getPendingClasses = async (page, limit) => {
-
+const classesCollection = await classesCollections()
     const query = {
         status: "pending"
     };
 
-    const result = await collection()
+    const result = await classesCollection
         .find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
         .limit(parseInt(limit))
         .toArray();
 
-    const totalClasses = await collection()
+    const totalClasses = await classesCollection
         .countDocuments(query);
 
     return {
@@ -87,19 +104,23 @@ const getPendingClasses = async (page, limit) => {
 };
 
 const getClassProgress = async (id) => {
+  const classesCollection = await classesCollections()
+  const assignmentCollection = await assignmentsCollections()
+  const submissionCollection = await submissionsCollections()
   const classData =
-    await collection().findOne({
+    await classesCollection.findOne({
       _id: new ObjectId(id),
     });
 
   const totalAssignments =
-    await assignmentCollection()
+   
+    await assignmentCollection
       .countDocuments({
         classId: id,
       });
 
   const totalSubmissions =
-    await submissionCollection()
+    await submissionCollection
       .countDocuments({
         classId: id,
       });
@@ -119,7 +140,8 @@ const updateClassStatus = async (
     updateDoc
 ) => {
 
-    return await collection().updateOne(
+  const classesCollection = await classesCollections()
+    return await classesCollection.updateOne(
         filter,
         updateDoc
     );
@@ -129,7 +151,8 @@ const updateClass = async (
   id,
   updateData
 ) => {
-  return await collection().updateOne(
+  const classesCollection = await classesCollections()
+  return await classesCollection.updateOne(
     {
       _id: new ObjectId(id),
     },
@@ -145,7 +168,7 @@ module.exports = {
     getSingleClass,
     getMyClasses,
     getPendingClasses,
-        getClassProgress,
+    getClassProgress,
     updateClassStatus,
     updateClass
 }

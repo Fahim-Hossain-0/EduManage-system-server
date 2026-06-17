@@ -1,11 +1,18 @@
 
 const { getDB } = require('../config/db');
 
-const collection = () => getDB().collection('users');
+// const collection = () => getDB().collection('users');
+
+const collection = async () => {
+  const db = await getDB();
+  return db.collection("users");
+};
 
 // Create user
 const createUser = async (userData) => {
-  return await collection().updateOne(
+  const users = await collection();
+
+  return await users.updateOne(
     {
       email: userData.email,
     },
@@ -33,14 +40,13 @@ const createUser = async (userData) => {
 // Get all users with pagination
 
 const getUsers = async (page, limit) => {
+  const users = await collection();
 
     // total users count
-    const totalUsers = await collection()
-        .countDocuments();
+    const totalUsers = await users.countDocuments();
 
     // paginated users
-    const result = await collection()
-
+    const result = await users
         .find()
 
         .skip((page - 1) * limit)
@@ -56,17 +62,20 @@ const getUsers = async (page, limit) => {
 };
 const getUsersNumber = async () => {
 
-    const total = await collection().countDocuments();
+    const users = await collection();
 
-    const teachers = await collection().countDocuments({ role: "teacher" });
+    const total = await users.countDocuments();
 
-    const students = await collection().countDocuments({ role: "student" });
+    const teachers = await users.countDocuments({ role: "teacher" });
+
+    const students = await users.countDocuments({ role: "student" });
 
     return { total, teachers, students };
 };
 
 const getUserRole = async(email)=>{
-  return await collection().findOne({email})
+  const users = await collection();
+  return await users.findOne({email})
 }
 
 const updateUserRole = async (email, role) => {
@@ -80,7 +89,8 @@ const updateUserRole = async (email, role) => {
     }
   };
 
-  return await collection().updateOne(filter, updateDoc);
+  const users = await collection();
+  return await users.updateOne(filter, updateDoc);
 };
 
 module.exports = {

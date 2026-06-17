@@ -1,15 +1,21 @@
 const { getDB } = require("../config/db");
 
-const collection = () =>
-  getDB().collection("assignments");
+// const collection = () =>
+//   getDB().collection("assignments");
 
+
+const collection = async () => {
+  const db = await getDB();
+  return db.collection("assignments");
+}
 // ====================
 // CREATE ASSIGNMENT
 // ====================
 
 const createAssignment =
   async (assignmentData) => {
-    return await collection().insertOne(
+    const assignmentCollection = await collection()
+    return await assignmentCollection.insertOne(
       assignmentData
     );
   };
@@ -20,7 +26,8 @@ const createAssignment =
 
 const getAssignmentsByClass =
   async (classId) => {
-    return await collection()
+const assignmentCollection = await collection()
+    return await assignmentCollection
       .find({
         classId,
       })

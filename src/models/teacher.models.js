@@ -1,22 +1,31 @@
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../config/db");
 
-const teacherCollection = () => getDB().collection("teachers");
-const userCollection = () => getDB().collection("users");
+// const teacherCollection = () => getDB().collection("teachers");
+// const userCollection = () => getDB().collection("users");
+const teacherCollections = async () => {
+  const db = await getDB();
+  return db.collection("teachers");
+};
+const userCollections = async () => {
+  const db = await getDB();
+  return db.collection("users");
+};
 
 // ===============================
 // GET ALL REQUESTS
 // ===============================
 const getAllTeacherRequests = async (page, limit) => {
+  const teacherCollection = await teacherCollections();
   const query = { status: "pending" };
 
-  const result = await teacherCollection()
+  const result = await teacherCollection
     .find(query)
     .skip((page - 1) * limit)
     .limit(parseInt(limit))
     .toArray();
 
-  const totalTeacherRequests = await teacherCollection().countDocuments(query);
+  const totalTeacherRequests = await teacherCollection.countDocuments(query);
 
   return {
     result,
@@ -28,7 +37,8 @@ const getAllTeacherRequests = async (page, limit) => {
 // CREATE REQUEST
 // ===============================
 const createTeacher = async (teacherData) => {
-  const existingRequest = await teacherCollection().findOne({
+  const teacherCollection = await teacherCollections();
+  const existingRequest = await teacherCollection.findOne({
     email: teacherData.email,
     status: { $in: ["pending", "accepted"] },
   });
@@ -43,7 +53,7 @@ const createTeacher = async (teacherData) => {
     };
   }
 
-  const result = await teacherCollection().insertOne(teacherData);
+  const result = await teacherCollection.insertOne(teacherData);
 
   return {
     success: true,
@@ -56,7 +66,8 @@ const createTeacher = async (teacherData) => {
 // APPROVE TEACHER (FIXED)
 // ===============================
 const teacherRequestApprove = async (id) => {
-  const request = await teacherCollection().findOne({
+  const teacherCollection = await teacherCollections();
+  const request = await teacherCollection.findOne({
     _id: new ObjectId(id),
   });
 
@@ -68,13 +79,14 @@ const teacherRequestApprove = async (id) => {
   }
 
   // 1. update teacher request status
-  await teacherCollection().updateOne(
+  await teacherCollection.updateOne(
     { _id: new ObjectId(id) },
     { $set: { status: "accepted" } }
   );
 
   // 2. update user role
-  await userCollection().updateOne(
+  const userCollection = await userCollections();
+  await userCollection.updateOne(
     { email: request.email },
     { $set: { role: "teacher" } }
   );
@@ -89,7 +101,8 @@ const teacherRequestApprove = async (id) => {
 // REJECT TEACHER
 // ===============================
 const teacherRequestReject = async (id) => {
-  await teacherCollection().updateOne(
+  const teacherCollection = await teacherCollections();
+  await teacherCollection.updateOne(
     { _id: new ObjectId(id) },
     { $set: { status: "rejected" } }
   );
