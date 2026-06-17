@@ -30,12 +30,7 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
+
 app.use(express.json());
 
 // Root Route
