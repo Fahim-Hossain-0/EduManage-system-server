@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://edu-manage-system.surge.sh"
+  "https://edu-manage-sytem-client.vercel.app"
 ];
 
 app.use(
