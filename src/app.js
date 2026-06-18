@@ -11,7 +11,6 @@ const evaluationRoutes = require("./routes/evaluation.route");
 
 const app = express();
 
-
 app.use(
   cors({
     origin: true,
@@ -19,15 +18,12 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 
-// Root Route
 app.get("/", (req, res) => {
   res.send("EduManage API Running 🚀");
 });
 
-// Routes
 app.use("/", userRoutes);
 app.use("/", addNewClassRoutes);
 app.use("/", teacherRoutes);
