@@ -1,7 +1,7 @@
 require("dotenv").config();
 
-console.log("FB_SERVICE_KEY exists:", !!process.env.FB_SERVICE_KEY);
-console.log("Length:", process.env.FB_SERVICE_KEY?.length);
+// console.log("FB_SERVICE_KEY exists:", !!process.env.FB_SERVICE_KEY);
+// console.log("Length:", process.env.FB_SERVICE_KEY?.length);
 
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
