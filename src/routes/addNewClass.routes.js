@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   addNewClass,
   getAllClasses,
+  getAdminAllClasses,
   getSingleClass,
   getMyClasses,
   updateClassStatus,
@@ -14,6 +15,7 @@ const {
 
 router.post("/add-class", addNewClass);
 router.get("/all-classes", getAllClasses);
+router.get("/admin/all-classes", getAdminAllClasses);
 router.get("/all-classes/:id", getSingleClass);
 router.get("/my-classes/:email", getMyClasses);
 router.get("/pending-classes", getPendingClasses);

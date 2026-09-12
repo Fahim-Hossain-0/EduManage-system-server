@@ -31,7 +31,7 @@ const addNewClass = async(classData)=>{
 
 const getAllClasses = async (page, limit) => {
 const classesCollection = await classesCollections()
-    const query = { status: "approved" }; // always approved only
+    const query = { status: "approved" };
 
     const result = await classesCollection
         .find(query)
@@ -45,6 +45,34 @@ const classesCollection = await classesCollections()
     return {
         result,
         totalClasses
+    };
+};
+
+const getAdminAllClasses = async (page, limit, statusFilter) => {
+const classesCollection = await classesCollections()
+    const query = {};
+    if (statusFilter && statusFilter !== 'all') {
+        query.status = statusFilter;
+    }
+
+    const result = await classesCollection
+        .find(query)
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit))
+        .toArray();
+
+    const totalClasses = await classesCollection.countDocuments(query);
+
+    const total = await classesCollection.countDocuments({});
+    const pending = await classesCollection.countDocuments({ status: "pending" });
+    const approved = await classesCollection.countDocuments({ status: "approved" });
+    const rejected = await classesCollection.countDocuments({ status: "rejected" });
+    const stats = { total, pending, approved, rejected };
+
+    return {
+        result,
+        totalClasses,
+        stats
     };
 };
 
@@ -165,6 +193,7 @@ const updateClass = async (
 module.exports = {
     addNewClass,
     getAllClasses,
+    getAdminAllClasses,
     getSingleClass,
     getMyClasses,
     getPendingClasses,

@@ -17,9 +17,22 @@ const getAllClasses = async(req,res)=>{
     try {
         const page = parseInt(req.query.page) || 1
         const limit = parseInt(req.query.limit) || 10
-        
 
         const result = await newClassModel.getAllClasses(page, limit);
+        res.json(result);
+    } catch (error) {   
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
+const getAdminAllClasses = async(req,res)=>{
+    try {
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const status = req.query.status || 'all';
+
+        const result = await newClassModel.getAdminAllClasses(page, limit, status);
         res.json(result);
     } catch (error) {   
         res.status(500).json({ message: error.message });
@@ -164,6 +177,7 @@ const updateClass = async (
 module.exports = {
     addNewClass,
     getAllClasses,
+    getAdminAllClasses,
     getSingleClass,
     getMyClasses,
     getPendingClasses,
